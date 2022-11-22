@@ -613,7 +613,7 @@ def main():
         # 添加prompt 占位,无实际意义
         if data_args.use_prompt:
             model_inputs['input_ids'] = [[0]*data_args.max_prompt_length + temp for temp in model_inputs['input_ids']]
-            model_inputs['attention_mask'] = [[0]*data_args.max_prompt_length + temp for temp in model_inputs['attention_mask']]
+            model_inputs['attention_mask'] = [[1]*data_args.max_prompt_length + temp for temp in model_inputs['attention_mask']]
 
         # Tokenize targets with the `text_target` keyword argument
         labels = tokenizer(text_target=targets, max_length=max_target_length, padding=padding, truncation=True)
