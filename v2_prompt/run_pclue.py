@@ -127,6 +127,10 @@ class ModelArguments:
             )
         },
     )
+    freeze: bool = field(
+        default=False,
+        metadata={"help": "freeze PLM"},
+    )
 
 
 @dataclass
@@ -506,7 +510,12 @@ def main():
             prompt_paradigm=data_args.prompt_paradigm,
         )
         model = model.model
-
+        if model_args.freeze:
+            for name, parameter in model.named_parameters():
+                if 'learned_embedding' not in name:
+                    parameter.requires_grad = False
+    
+    #import pdb; pdb.set_trace()
     # We resize the embeddings only when necessary to avoid index errors. If you are creating a model from scratch
     # on a small vocab and want a smaller embedding size, remove this test.
     if data_args.use_prompt:
