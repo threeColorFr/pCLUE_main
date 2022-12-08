@@ -7,6 +7,6 @@
 ## 环境
 conda环境见env.yaml
 transformer源码已修改过，需从git获取
-> [地址](https://github.com/threeColorFr/transformers/tree/test_v2)
-> cd transformers
+> [地址](https://github.com/threeColorFr/transformers/tree/test_v2)  
+> cd transformers  
 > pip install -e .
