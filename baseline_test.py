@@ -33,11 +33,13 @@ def answer_fn(text, type, sample=False, top_p=0.6):
   encoding = encoding.to(device)
   # types参数会通过generate的**model_kwargs自动传到model的forward中
   if not sample: # 不进行采样
-    out = model_trained.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_length=128, num_beams=4, length_penalty=0.6)
+    out = model_trained.generate(**encoding, return_dict_in_generate=True, output_scores=True, max_length=128, num_beams=4, length_penalty=0.6)
   else: # 采样（生成）
     out = model_trained.generate(**encoding, return_dict_in_generate=True, output_scores=False, max_length=128, do_sample=True, top_p=top_p)
+
+  
   out_text = tokenizer.batch_decode(out["sequences"], skip_special_tokens=True)
-  return postprocess(out_text[0])  
+  return postprocess(out_text[0]), out['sequences_scores'] # text, log_scores
 
 
 # 在公开测试集上做预测，并写入到文件
@@ -54,8 +56,9 @@ def predict_on_test(source_file, target_file, select_top=-1):
     target_answer=json_string_right["target"]
     type=task_dict[json_string_right["type"]]
 
-    predict_answer=answer_fn(input_string, type)
-    json_string_predict={"target":predict_answer.strip(),"type":type}
+    predict_answer, log_score=answer_fn(input_string, type)
+    score = torch.exp(log_score)
+    json_string_predict={"target":predict_answer.strip(),"type":json_string_right["type"], 'score':float(score)}
     json_string_predict=json.dumps(json_string_predict,ensure_ascii=False)
     target_object.write(json_string_predict+"\n")
     if i%100==0: 
