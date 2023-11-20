@@ -204,7 +204,7 @@ if __name__=='__main__':
           count+=1
       assert count==0, "difference between train and test"
     else:
-      model_trained = AutoModelForSeq2SeqLM.from_pretrained(args.model_path) # 和T5ForConditionalGeneration.from_pretrained()一样
+      model_trained = AutoModelForSeq2SeqLM.from_pretrained(args.model_path) # 和T5ForConditionalGeneration.from_pretrained()一样； AutoModelForSeq2SeqLM.from_pretrained会自动检索dict，得到模型后再调用from_pretrained
 
     model_trained.to(device)
 
